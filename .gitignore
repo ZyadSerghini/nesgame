@@ -3,3 +3,5 @@
 *.nes*
 .DS_Store
 demo.nes
+demo.nes.deb
+main.nes.deb
