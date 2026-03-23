@@ -36,6 +36,11 @@ buttons:     .res 1
 
 oam = $0200
 
+;CONSTANTS
+
+BG_SKY = $20
+BG_GROUND = $21
+
 
 ; =========================
 ; CODE
@@ -46,13 +51,19 @@ oam = $0200
 ; PALETTE
 ; =========================
 palette:
-.byte $0F,$30,$21,$11
+.byte $0D,$06,$15,$26
+.byte $0F,$00,$00,$00
+.byte $0F,$00,$00,$00
+.byte $0F,$00,$00,$00
+
+palette_bg:
+.byte $0F,$2C,$2A,$05
 .byte $0F,$00,$00,$00
 .byte $0F,$00,$00,$00
 .byte $0F,$00,$00,$00
 
 ; -------------------------
-; Controller
+; Controller routines
 ; -------------------------
 read_controller:
     lda #1
@@ -109,7 +120,7 @@ vblank2:
 ; -------------------------
 ; Load sprite palette ($3F10)
 ; -------------------------
-    lda $2002
+    lda $2002 ; Reset latch
 
     lda #$3F
     sta $2006
@@ -123,6 +134,42 @@ load_palette:
     inx
     cpx #$10
     bne load_palette
+
+;background
+
+lda $2002
+lda #$3F
+sta $2006
+lda #$00
+sta $2006
+
+ldx #0
+bg_palette:
+    lda palette_bg, x
+    sta $2007
+    inx
+    cpx #$10
+    bne bg_palette
+
+lda $2002
+lda #$20
+sta $2006
+lda #$00
+sta $2006
+
+; fill 30 rows (32 tiles each)
+
+ldy #30
+row_loop:
+    ldx #32
+col_loop:
+    lda #BG_SKY
+    sta $2007
+    dex
+    bne col_loop
+
+    dey
+    bne row_loop
 
 ; Enable NMI + rendering
     lda #%10000000
@@ -248,13 +295,4 @@ in_air:
 ; =========================
 .segment "CHARS"
 
-.byte %11111111
-.byte %11111111
-.byte %11111111
-.byte %11111111
-.byte %11111111
-.byte %11111111
-.byte %11111111
-.byte %11111111
-
-.byte $00,$00,$00,$00,$00,$00,$00,$00
+.incbin "graphics.chr"

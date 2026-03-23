@@ -1,5 +1,7 @@
 # NES
 
+To play the game, simply run **main.nes** in an NES emulator such as FCEUX.
+
 ## Architecture analysis
 
 ### CPU
