@@ -23,8 +23,9 @@ player_vy:   .res 1
 sprite_offset: .res 1
 buttons:     .res 1
 
-ptr_lo:      .res 1   ; NEW
-ptr_hi:      .res 1   ; NEW
+
+ptr_lo:      .res 1
+ptr_hi:      .res 1
 
 
 ; =========================
@@ -51,7 +52,7 @@ oam = $0200
 ; =========================
 palette:
 .byte $0D,$06,$15,$26
-.byte $0F,$00,$00,$00
+.byte $0D,$07,$15,$26
 .byte $0F,$00,$00,$00
 .byte $0F,$00,$00,$00
 
@@ -239,6 +240,9 @@ load_nt:
     lda #0
     sta player_vy
 
+    lda #0
+    sta sprite_offset
+
 
 ; -------------------------
 ; Clear OAM
@@ -328,18 +332,77 @@ in_air:
 ; -------------------------
 ; SPRITE
 ; -------------------------
+    ldx #0
+    head_sprite_load:
+        txa
+        asl a
+        asl a
+        tay        ; Y = X * 4 (OAM offset)
 
-    lda player_y
-    sta oam
+        ; Y position
+        lda player_y
+        sta oam, y
 
-    lda sprite_offset
-    sta oam+1
+        ; tile
+        txa
+        sta oam+1, y
 
-    lda #%00000000
-    sta oam+2
+        ; properties
+        lda #%00000000
+        sta oam+2, y
 
-    lda player_x
-    sta oam+3
+        ; x-position
+
+        txa
+        asl
+        asl
+        asl
+        clc
+        adc player_x
+        sta oam+3, y
+
+        inx
+        cpx #2
+        bne head_sprite_load
+    
+    ldx #0
+    body_sprite_load:
+        txa
+        asl a
+        asl a
+        tay        ; Y = X * 4 (OAM offset)
+
+        ; Y position
+        lda player_y
+        clc
+        adc #8
+        sta oam+8, y
+
+        ; tile
+        txa
+        clc
+        adc sprite_offset
+        clc
+        adc #$10
+        sta oam+9, y
+
+        ; properties
+        lda #%00000001
+        sta oam+10, y
+
+        ; x-position
+
+        txa
+        asl
+        asl
+        asl
+        clc
+        adc player_x
+        sta oam+11, y
+
+        inx
+        cpx #2
+        bne body_sprite_load
 
 
     jmp forever
