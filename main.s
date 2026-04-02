@@ -277,7 +277,7 @@ wait_frame:
     adc #1
     sta frame_counter
 
-    cmp #30
+    cmp #15
     bne input
 
     lda #0
@@ -317,7 +317,7 @@ not_left:
     beq no_jump
 
     lda player_y
-    cmp #$A0 ; compares to Y position on the ground
+    cmp #$B5 ; compares to Y position on the ground
     bne no_jump
 
     lda #$F8 ; sets player's velocity to -8 (unsigned)
@@ -341,10 +341,10 @@ no_jump:
 
 ; GROUND
     lda player_y
-    cmp #$A0
+    cmp #$B5
     bcc in_air
 
-    lda #$A0
+    lda #$B5
     sta player_y
 
     lda #0
