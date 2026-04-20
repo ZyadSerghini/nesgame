@@ -260,3 +260,17 @@ A typical frame cycle iteration:
 - Player input processed
 - Positions updated
 - Sprites written to OAM buffer
+
+# 8-bit Console Benchmark: Sega Master System vs Nintendo Entertainment System
+
+| Category | Sega Master System (SMS) | Nintendo Entertainment System (NES) |
+|---|---|---|
+| CPU | Zilog Z80A @ ~3.58 MHz | Ricoh 2A03 (6502-based) @ ~1.79 MHz |
+| System RAM | 8 KB | 2 KB |
+| Video RAM (VRAM) | 16 KB | ~2 KB |
+| Graphics chip | Sega VDP (custom) | Nintendo PPU (custom) |
+| Resolution (typical) | 256×192 (up to 256×224) | 256×240 |
+| Color palette | 64 total, 32 on screen | ~52–64 total, ~16 on screen |
+| Color usage per tile | Up to 16 colors | Typically 4 colors |
+| Sprites (max on screen) | ~32 | Up to 64 |
+| Audio chip | SN76489 PSG (3 square + 1 noise), optional FM (JP) | 5 channels (2 pulse, triangle, noise, DPCM) |
