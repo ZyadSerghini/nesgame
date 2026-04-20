@@ -1,4 +1,4 @@
-# NES
+# Little Runner
 
 To play the game, simply run **game.nes** in an NES emulator such as FCEUX.
 
