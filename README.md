@@ -1,8 +1,24 @@
 # Little Runner
 
-To play the game, simply run **game.nes** in an NES emulator such as FCEUX.
+![Game Demo](img/demo.gif)
 
-## Architecture analysis
+To play the game, simply run **game.nes** in an NES emulator such as [FCEUX](https://fceux.com/web/home.html).
+
+*Clicking on an image will redirect you to its source.*
+
+## 📋 Table of Contents
+
+- [👾 Architecture analysis](#-architecture-analysis)
+  - [CPU](#cpu)
+  - [CPU Memory Map](#cpu-memory-map)
+  - [PPU (Picture Processing Unit)](#ppu-picture-processing-unit)
+  - [OAM (Object Attribute Memory)](#oam-object-attribute-memory)
+  - [APU (Audio Processing Unit)](#apu-audio-processing-unit)
+  - [Controller Input](#controller-input)
+  - [NMI (Non-Maskable Interrupt)](#nmi-non-maskable-interrupt)
+- [📊 8-bit Console Benchmark: Sega Master System vs Nintendo Entertainment System](#-8-bit-console-benchmark-sega-master-system-vs-nintendo-entertainment-system)
+
+## 👾 Architecture analysis
 
 ### CPU
 
@@ -17,7 +33,7 @@ The CPU also has access to 2KB of SRAM (Static RAM) called the WRAM for ‘Work 
 
 The CPU accesses memory through a fixed address map:
 
-```
+```text
 $0000–$07FF 2KB internal RAM (WRAM)
 $0800–$1FFF Mirrors of $0000–$07FF
 $2000–$2007 PPU registers
@@ -81,7 +97,7 @@ The PPU is controlled via registers at $2000–$2007 of the WRAM (CPU side).
 - `$2006` — **PPUADDR** (write ×2): set VRAM address
 - `$2007` — **PPUDATA** (read/write): read/write VRAM
 
-```
+```text
 PPUCTRL ($2000)
 
 7 6 5 4 3 2 1 0
@@ -95,7 +111,7 @@ PPUCTRL ($2000)
 └────────────── NMI Enable (0=disabled, 1=enabled)
 ```
 
-```
+```text
 PPUMASK ($2001)
 
 7 6 5 4 3 2 1 0
@@ -110,7 +126,7 @@ PPUMASK ($2001)
 └──────────────── Color emphasis (blue)
 ```
 
-```
+```text
 PPUSTATUS ($2002)
 
 7 6 5 4 3 2 1 0
@@ -125,7 +141,7 @@ PPUSTATUS ($2002)
 └──────────────── VBlank (0=not in VBlank, 1=in VBlank)
 ```
 
-```
+```text
 OAMADDR ($2003)
 
 7 6 5 4 3 2 1 0
@@ -133,7 +149,7 @@ OAMADDR ($2003)
 \________________ Address in OAM (0–255)
 ```
 
-```
+```text
 OAMDATA ($2004)
 
 7 6 5 4 3 2 1 0
@@ -142,7 +158,7 @@ OAMDATA ($2004)
 \________________ Data written/read to OAM at current address
 ```
 
-```
+```text
 PPUSCROLL ($2005)
 
 First write:
@@ -154,7 +170,7 @@ Second write:
 \________________ Y scroll (fine + coarse)
 ```
 
-```
+```text
 PPUADDR ($2006)
 
 First write:
@@ -166,7 +182,7 @@ Second write:
 \________________ Low byte of VRAM address
 ```
 
-```
+```text
 PPUDATA ($2007)
 
 7 6 5 4 3 2 1 0
@@ -176,9 +192,8 @@ PPUDATA ($2007)
 
 ---
 
-
-
 ### OAM (Object Attribute Memory)
+
 OAM stores all active sprite data. Each sprite is made of 4 bytes that represent its properties.
 
 - `Byte 0:` — **Y position**
@@ -211,7 +226,8 @@ sta $4000
 ```
 
 ### Controller Input
-NES controllers are made of 8 buttons **_(A, B, Up, Down, Left, Right, Start Select)_**. Upon pressing a button, it closes an electrical circuit within the controller that transmits to the CPU trough the controller port. It is important to note that controller input is read button by button and it is up to the developper to shift every input one by one to make a controller bitmap. The controller output is read via memory address $4016.
+
+NES controllers are made of 8 buttons ***(A, B, Up, Down, Left, Right, Start Select)***. Upon pressing a button, it closes an electrical circuit within the controller that transmits to the CPU trough the controller port. It is important to note that controller input is read button by button and it is up to the developper to shift every input one by one to make a controller bitmap. The controller output is read via memory address $4016.
 
 ```asm
 lda #1
@@ -246,7 +262,6 @@ nmi:
 
 The rendering pipeline is as follows:
 
-
 - **Wait for VBlank**
 - **Update OAM / VRAM**
 - **Let PPU render frame**
@@ -261,10 +276,10 @@ A typical frame cycle iteration:
 - Positions updated
 - Sprites written to OAM buffer
 
-# 8-bit Console Benchmark: Sega Master System vs Nintendo Entertainment System
+## 📊 8-bit Console Benchmark: Sega Master System vs Nintendo Entertainment System
 
 | Category | Sega Master System (SMS) | Nintendo Entertainment System (NES) |
-|---|---|---|
+| ---------- | --- | --- |
 | CPU | Zilog Z80A @ ~3.58 MHz | Ricoh 2A03 (6502-based) @ ~1.79 MHz |
 | System RAM | 8 KB | 2 KB |
 | Video RAM (VRAM) | 16 KB | ~2 KB |
